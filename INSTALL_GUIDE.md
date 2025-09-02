@@ -1,8 +1,10 @@
 # 🚀 SSH-Stunnel Manager - Complete Installation Guide
+## **Ubuntu 20.04 - 24.04 LTS Compatible**
 
 ## 📋 Quick Installation Links
 
 ### 🎯 One-Line Installation (Recommended)
+**Perfect for Ubuntu 20.04, 22.04, and 24.04 LTS:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/mkkelati/stunnel5/main/install.sh | sudo bash
 ```
@@ -14,7 +16,19 @@ curl -fsSL https://raw.githubusercontent.com/mkkelati/stunnel5/main/install.sh |
 
 ## 🔄 System Update Commands (Run First)
 
-### Ubuntu/Debian Systems
+### Ubuntu 20.04 / 22.04 / 24.04 LTS Systems
+```bash
+# Update package lists and upgrade system (Ubuntu 20.04-24.04)
+sudo apt update && sudo apt upgrade -y
+
+# Install essential packages (optimized for Ubuntu LTS versions)
+sudo apt install -y curl wget ca-certificates gnupg software-properties-common
+
+# Run the Ubuntu-optimized installer
+curl -fsSL https://raw.githubusercontent.com/mkkelati/stunnel5/main/install.sh | sudo bash
+```
+
+### Other Debian-based Systems
 ```bash
 # Update package lists and upgrade system
 sudo apt update && sudo apt upgrade -y
@@ -54,9 +68,15 @@ curl -fsSL https://raw.githubusercontent.com/mkkelati/stunnel5/main/install.sh |
 
 ### Step 1: Update System Packages
 ```bash
+# Check Ubuntu version first (for Ubuntu users)
+lsb_release -a
+
 # Choose your distribution:
 
-# Ubuntu/Debian
+# Ubuntu 20.04 / 22.04 / 24.04 LTS (Primary Support)
+sudo apt update && sudo apt upgrade -y
+
+# Other Debian-based systems
 sudo apt update && sudo apt upgrade -y
 
 # CentOS/RHEL  
@@ -68,14 +88,17 @@ sudo dnf update -y
 
 ### Step 2: Install Required Packages
 ```bash
-# Ubuntu/Debian
-sudo apt install -y stunnel4 openssh-server openssl curl wget
+# Ubuntu 20.04 / 22.04 / 24.04 LTS
+sudo apt install -y stunnel4 openssh-server openssl curl wget net-tools ca-certificates
+
+# Other Debian-based systems
+sudo apt install -y stunnel4 openssh-server openssl curl wget net-tools
 
 # CentOS/RHEL
-sudo yum install -y stunnel openssh-server openssl curl wget
+sudo yum install -y stunnel openssh-server openssl curl wget net-tools
 
 # Fedora  
-sudo dnf install -y stunnel openssh-server openssl curl wget
+sudo dnf install -y stunnel openssh-server openssl curl wget net-tools
 ```
 
 ### Step 3: Download and Install Script
@@ -141,6 +164,23 @@ sudo ./install.sh
 ```
 
 ## 🔍 Verification Commands
+
+### Ubuntu Version Compatibility Check
+```bash
+# Check Ubuntu version
+lsb_release -a
+
+# Expected supported versions:
+# Ubuntu 20.04.x LTS (Focal Fossa)    ✅ Fully Supported
+# Ubuntu 22.04.x LTS (Jammy Jellyfish) ✅ Fully Supported  
+# Ubuntu 24.04.x LTS (Noble Numbat)    ✅ Fully Supported
+
+# Verify stunnel4 package availability
+apt-cache show stunnel4
+
+# Check if running on supported Ubuntu
+cat /etc/os-release | grep VERSION_ID
+```
 
 ### Check Installation
 ```bash

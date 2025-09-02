@@ -85,8 +85,13 @@ Perfect for HTTP Injector app with **Stunnel protocol** on **port 443**:
 
 ## 🛠️ Supported Distributions
 
-- ✅ Ubuntu 18.04+
-- ✅ Debian 9+
+**Officially Tested & Supported:**
+- ✅ **Ubuntu 20.04 LTS** (Focal Fossa)
+- ✅ **Ubuntu 22.04 LTS** (Jammy Jellyfish)  
+- ✅ **Ubuntu 24.04 LTS** (Noble Numbat)
+
+**Also Compatible:**
+- ✅ Debian 10+
 - ✅ CentOS 7+
 - ✅ RHEL 7+
 - ✅ Fedora 30+

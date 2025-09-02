@@ -57,7 +57,7 @@ check_root() {
     fi
 }
 
-# Detect Linux distribution
+# Detect Linux distribution and version
 detect_distro() {
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
@@ -69,6 +69,36 @@ detect_distro() {
     else
         echo "unknown"
     fi
+}
+
+# Get Ubuntu version
+get_ubuntu_version() {
+    if [[ -f /etc/os-release ]]; then
+        . /etc/os-release
+        echo "$VERSION_ID"
+    else
+        echo "unknown"
+    fi
+}
+
+# Check if Ubuntu version is supported (20.04 to 24.04)
+check_ubuntu_support() {
+    local distro=$(detect_distro)
+    if [[ "$distro" == "ubuntu" ]]; then
+        local version=$(get_ubuntu_version)
+        case "$version" in
+            "20.04"|"22.04"|"24.04"|"20.10"|"21.04"|"21.10"|"23.04"|"23.10")
+                log "INFO" "Ubuntu $version detected - supported version"
+                return 0
+                ;;
+            *)
+                log "WARNING" "Ubuntu $version detected - may work but not officially tested"
+                log "INFO" "Officially supported: Ubuntu 20.04, 22.04, 24.04"
+                return 0
+                ;;
+        esac
+    fi
+    return 0
 }
 
 # Update system packages
@@ -148,18 +178,64 @@ update_system() {
 # Install SSH-Stunnel Manager dependencies
 install_dependencies() {
     local distro=$(detect_distro)
+    local ubuntu_version=$(get_ubuntu_version)
     
     log "INFO" "Installing SSH-Stunnel Manager dependencies..."
     
     case "$distro" in
-        "ubuntu"|"debian")
+        "ubuntu")
+            log "INFO" "Installing packages for Ubuntu $ubuntu_version..."
+            
+            # Update package lists first
+            apt-get update -qq
+            
+            # Install dependencies with Ubuntu-specific handling
+            local packages=(
+                "stunnel4"
+                "openssh-server" 
+                "openssl"
+                "net-tools"
+                "systemd"
+                "ca-certificates"
+                "curl"
+                "wget"
+            )
+            
+            # Add netstat-nat if available (may not be in newer Ubuntu versions)
+            if apt-cache show netstat-nat >/dev/null 2>&1; then
+                packages+=("netstat-nat")
+            fi
+            
+            # Install packages one by one for better error handling
+            for package in "${packages[@]}"; do
+                log "INFO" "Installing $package..."
+                if ! DEBIAN_FRONTEND=noninteractive apt-get install -y "$package"; then
+                    if [[ "$package" == "netstat-nat" ]]; then
+                        log "WARNING" "netstat-nat not available, using net-tools instead"
+                        continue
+                    else
+                        log "ERROR" "Failed to install $package"
+                        exit 1
+                    fi
+                fi
+            done
+            
+            # Verify stunnel installation
+            if ! command -v stunnel4 >/dev/null 2>&1 && ! command -v stunnel >/dev/null 2>&1; then
+                log "ERROR" "Stunnel installation failed"
+                exit 1
+            fi
+            ;;
+        "debian")
             DEBIAN_FRONTEND=noninteractive apt-get install -y \
                 stunnel4 \
                 openssh-server \
                 openssl \
-                netstat-nat \
                 net-tools \
-                systemd || {
+                systemd \
+                ca-certificates \
+                curl \
+                wget || {
                 log "ERROR" "Failed to install dependencies"
                 exit 1
             }
@@ -170,7 +246,10 @@ install_dependencies() {
                 openssh-server \
                 openssl \
                 net-tools \
-                systemd || {
+                systemd \
+                ca-certificates \
+                curl \
+                wget || {
                 log "ERROR" "Failed to install dependencies"
                 exit 1
             }
@@ -181,7 +260,10 @@ install_dependencies() {
                 openssh-server \
                 openssl \
                 net-tools \
-                systemd || {
+                systemd \
+                ca-certificates \
+                curl \
+                wget || {
                 log "ERROR" "Failed to install dependencies"
                 exit 1
             }
@@ -312,6 +394,7 @@ show_summary() {
 main() {
     echo -e "${CYAN}SSH-Stunnel Manager Installer${NC}"
     echo -e "${CYAN}==============================${NC}"
+    echo -e "${CYAN}Ubuntu 20.04 - 24.04 Compatible${NC}"
     echo
     
     # Check root privileges
@@ -321,9 +404,18 @@ main() {
     touch "$LOG_FILE"
     chmod 644 "$LOG_FILE"
     
+    local distro=$(detect_distro)
+    local ubuntu_version=$(get_ubuntu_version)
+    
     log "INFO" "Starting SSH-Stunnel Manager installation"
-    log "INFO" "Distribution: $(detect_distro)"
+    log "INFO" "Distribution: $distro"
+    if [[ "$distro" == "ubuntu" ]]; then
+        log "INFO" "Ubuntu Version: $ubuntu_version"
+    fi
     log "INFO" "User: $(whoami)"
+    
+    # Check Ubuntu support
+    check_ubuntu_support
     
     # Installation steps
     update_system
