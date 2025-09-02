@@ -96,7 +96,7 @@ sudo /usr/local/bin/ssh-stunnel-manager.sh install
 
 ## 🎮 HTTP Injector Setup Guide
 
-Perfect for connecting with HTTP Injector app [[memory:7493782]]:
+Perfect for connecting with HTTP Injector app using Stunnel protocol [[memory:7493782]]:
 
 ### Step 1: Install SSH-Stunnel Manager
 ```bash
@@ -115,7 +115,8 @@ ssh-stunnel-manager.sh start --host YOUR_SERVER.com --ssh-port 443 --local-port 
 ### Step 3: HTTP Injector Configuration
 - **Host**: `localhost` or `127.0.0.1`
 - **Port**: `8443` (or your chosen local port)
-- **Protocol**: SSL/TLS proxy - SSH
+- **Protocol**: Stunnel
+- **Remote Host**: `YOUR_SERVER.com`
 - **Remote Port**: `443`
 
 ## 🔧 Advanced Installation Options
@@ -286,7 +287,7 @@ ssh-stunnel-manager.sh menu
 # 3. Or start tunnel directly (replace with your details)
 ssh-stunnel-manager.sh start --host your-server.com --ssh-port 443 --local-port 8443
 
-# 4. Use in HTTP Injector: localhost:8443 with SSL/TLS proxy - SSH
+# 4. Use in HTTP Injector: localhost:8443 with Stunnel protocol
 ```
 
-**Perfect for HTTP Injector with SSL/TLS proxy - SSH on port 443!** 🚀
+**Perfect for HTTP Injector with Stunnel protocol on port 443!** 🚀

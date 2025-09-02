@@ -66,14 +66,16 @@ sudo ./ssh-stunnel-manager.sh install
 
 ## 🔧 HTTP Injector Configuration
 
-Perfect for HTTP Injector app with **SSL/TLS proxy - SSH** on **port 443**:
+Perfect for HTTP Injector app with **Stunnel protocol** on **port 443**:
 
 1. Run the installation
 2. Configure tunnel: `./ssh-stunnel-manager.sh start --host your-server.com --ssh-port 443 --local-port 8443`
 3. In HTTP Injector, use:
    - **Host**: `localhost`
    - **Port**: `8443` (or your chosen local port)
-   - **Protocol**: SSL/TLS proxy - SSH
+   - **Protocol**: Stunnel
+   - **Remote Host**: `your-server.com`
+   - **Remote Port**: `443`
 
 ## 📋 Requirements
 
